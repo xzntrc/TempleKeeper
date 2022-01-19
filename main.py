@@ -23,8 +23,18 @@ def get_prefix(client, message):
         prefixes = json.load(f)
         return prefixes[str(message.guild.id)]
 
-bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True, help_command=None)
 
+@bot.command()
+async def help(ctx):
+    embed=discord.Embed(title="TempleKeeper Help", description="Here you can find a list of commands for the TempleKeeper bot!", color=0x99c1f1)
+    embed.set_author(name="Eccentrici386", url="https://github.com/Eccentrici/TempleKeeper")
+    embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/tGXj9gSrokoiSgb1532aPBZ5pD02LabEPqT4JGqSC3c/https/c.tenor.com/WIqvnT_7Vj8AAAAi/terry-a-davis-terry-davis.gif")
+    embed.add_field(name="Godspeak", value="Allows you to speak to God! \n Usage: `$godspeak {num}` (default 32).", inline=False)
+    embed.add_field(name="Rand", value="Generates random numbers. \n Run `$rand` for more info.", inline=False)
+    embed.add_field(name="Credit", value="View the documentation for more help [here](https://eccentrici.gitbook.io/tos/). \n Add to your own server [here](https://discord.com/oauth2/authorize?client_id=932193544695873566&permissions=137439308864&scope=bot).\n Test it out in the [TempleOS Discord Server](https://discord.gg/templeos)", inline=False)
+    embed.set_footer(text="Even he shall build the temple of the Lord; and he shall bear the glory...")
+    await ctx.send(embed=embed)
 
 @bot.event
 async def on_guild_join(guild):
@@ -59,6 +69,7 @@ async def setprefix(ctx, prefix):
 @bot.event
 async def on_ready():
     print("Bot Ready.")
+    await bot.change_presence(activity=discord.Game(name="chess with God"))
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Ping is {round(bot.latency * 1000)}ms')
