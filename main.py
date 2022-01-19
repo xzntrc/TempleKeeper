@@ -74,7 +74,9 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(f'Ping is {round(bot.latency * 1000)}ms')
 
-
+@bot.command()
+async def bob(ctx):
+    await ctx.send(f"BOT WILL BE OFFLINE FOR THE NEXT ~12 HOURS. CURRENTLY SWTICHING TO A DEDICATED VPS.")
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
