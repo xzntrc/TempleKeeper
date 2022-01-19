@@ -1,0 +1,53 @@
+import discord
+from discord.ext import commands
+import requests
+import asyncio
+from discord import Embed
+from discord import Color as c
+import re
+import quantumrandom
+
+class randCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def rand(self, ctx, *args):
+        if args[0] == "int":
+            if len(args) < 3:
+                embed=discord.Embed(title="Undefined Fields",description="This command requires 3 arguements. \n Ensure you're using the following format:\n `!rand int {min} {max}`", color=discord.Color.orange())
+                await ctx.send(embed=embed)
+
+                await ctx.send(embed=embed)
+            elif len(args) >= 3:
+                print("greater than 3")
+
+                if len(args) == 4:
+                    print("greater than 4")
+                    if args[4] == "--round":
+                        print("has round")
+                        if len(args) == 5:
+                            rand = round(randint(args[1],args[2]), args[4])
+                            embed=discord.Embed(title="Generated", description=f"{rand}", color=discord.Color.from_rgb(0, 244, 244))
+                            await ctx.send(embed=embed)
+                            print("gen ran round")
+                        else:
+                            embed=discord.Embed(title="Data Error", description="You have not set a decimal place to round to. \n Usage: \n `!rand int {min} {max} [--round] [dp]`", color=discord.Color.orange())
+                            await ctx.send(embed=embed)
+                            print("no dec")
+                else:
+                    print("gen rand")
+                    rand = randint(args[1], args[2])
+                    embed=discord.Embed(title="Generated", description=f"{rand}", color=discord.Color.from_rgb(0, 244, 244))
+                    await ctx.send(embed=embed)    
+
+
+
+            
+
+def randint(min, max):
+    return quantumrandom.randint(int(min), int(max))
+    
+        
+def setup(bot):
+    bot.add_cog(randCog(bot))
