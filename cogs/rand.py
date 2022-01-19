@@ -15,15 +15,13 @@ class randCog(commands.Cog):
             await ctx.send(embed=embed)
         elif args[0] == "float":
             if len(args) < 3:
-                embed=discord.Embed(title="Undefined Fields",description="This command requires 3 arguments Ensure you are using the correct format:\n `>rand float {min} {max} [--round] [dp] `", color=discord.Color.orange(), url="https://eccentrici.gitbook.io/templekeeper/usage/random-numbers")
+                embed=discord.Embed(title="Undefined Fields",description="This command requires 3 arguments; ensure you are using the correct format:\n `>rand float {min} {max} [--round] [dp]` \n \n For more info, check this command's [documentation](https://eccentrici.gitbook.io/templekeeper/usage/random-numbers).", color=discord.Color.orange())
                 embed.set_footer(text='In loving memory of Terry A. Davis.')
                 await ctx.send(embed=embed)
 
             elif len(args) >= 3:
-                print("greater than 3")
 
                 if len(args) >= 4:
-                    print("")
                     if len(args) == 4:
                         embed=discord.Embed(title="Data Invalid", description="You have not specified a decimal place (dp) to round to:.", color=discord.Color.orange())
                         embed.set_footer(text='In loving memory of Terry A. Davis.')
@@ -39,7 +37,7 @@ class randCog(commands.Cog):
         elif args[0] == "int":
                 if len(args) < 3:
                                        
-                    embed=discord.Embed(title="Undefined Fields",description="This command requires 3 arguments Ensure you are using the correct format:\n `>rand int {min} {max}`", color=discord.Color.orange(), url="https://eccentrici.gitbook.io/templekeeper/usage/random-numbers")
+                    embed=discord.Embed(title="Undefined Fields",description="This command requires 3 arguments Ensure you are using the correct format:\n `>rand int {min} {max}` \n \n For more info, check this command's [documentation](https://eccentrici.gitbook.io/templekeeper/usage/random-numbers).", color=discord.Color.orange())
                     embed.set_footer(text='In loving memory of Terry A. Davis.')
                     await ctx.send(embed=embed)
                 else:
