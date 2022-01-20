@@ -74,9 +74,20 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(f'Ping is {round(bot.latency * 1000)}ms')
 
-@bot.command()
-async def bob(ctx):
-    await ctx.send(f"BOT WILL BE OFFLINE FOR THE NEXT ~12 HOURS. CURRENTLY SWTICHING TO A DEDICATED VPS.")
+
+@bot.event
+async def on_message(message):
+    mention = f'<@!{932193544695873566}>'
+    if mention in message.content:
+        with open('prefixes.json', 'r') as f:
+            prefixes = json.load(f)
+
+        p = prefixes[str(message.guild.id)]
+        e = discord.Embed(title="Server Prefx", description=f"My prefix is set to `{p}`", color=discord.Color.from_rgb(0,244,244))
+        e.set_footer(text=f"If you're an admin, you can change this with {p}setprefix [prefix].")
+        await message.channel.send(embed=e, delete_after=5)
+    await bot.process_commands(message)
+
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
