@@ -5,8 +5,7 @@ import discord
 from discord.ext import commands
 import os
 import sentry_sdk
-
-os.system('cls' if os.name == 'nt' else 'clear')
+import logging
 
 sentry_sdk.init(
     os.environ.get('SENTRY_DSN', ''),
@@ -20,6 +19,7 @@ sentry_sdk.init(
 def get_prefix(_, message):
     with open('prefixes.json', 'r') as f:
         prefixes = json.load(f)
+        logging.debug(f"prefix:{prefixes[str(message.guild.id)]}")
         return prefixes[str(message.guild.id)]
 
 
@@ -77,6 +77,7 @@ async def setprefix(ctx, prefix):
 
 @bot.event
 async def on_ready():
+    logging.debug("Bot is ready")
     await bot.change_presence(activity=discord.Game(name="chess with God"))
 
 
@@ -87,6 +88,7 @@ async def ping(ctx):
 
 @bot.command()
 async def showme(ctx):
+    logging.debug("showmetheway")
     await ctx.send('The way')
 
 
@@ -95,6 +97,7 @@ async def on_message(message):
     user_id = os.environ.get('USER_ID', '955583532527411264')
     mention = f'<@&{user_id}>'
     if mention in message.content:
+        logging.debug("Mention")
         with open('prefixes.json', 'r') as f:
             prefixes = json.load(f)
 
@@ -111,4 +114,5 @@ for filename in os.listdir('./cogs'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 if __name__ == "__main__":
+    logging.debug("Bot run")
     bot.run(os.environ.get('DISCORD_TOKEN', ''))
