@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 import os
 import sentry_sdk
-import logging
 
 from cogs.godspeak import GodspeakCog
 from cogs.quote import QuoteCog
@@ -82,7 +81,6 @@ async def on_guild_remove(guild):
 
 @bot.event
 async def on_ready():
-    logging.error("Bot is ready")
     await bot.change_presence(activity=discord.Game(name="chess with God"))
 
 
@@ -93,7 +91,6 @@ async def ping(ctx):
 
 @bot.command()
 async def showme(ctx):
-    logging.error("showmetheway")
     await ctx.send('The way')
 
 
@@ -102,7 +99,6 @@ async def on_message(message):
     user_id = os.environ.get('USER_ID', '955583532527411264')
     mention = f'<@&{user_id}>'
     if mention in message.content:
-        logging.error("Mention")
         with open('prefixes.json', 'r') as f:
             prefixes = json.load(f)
 
@@ -119,6 +115,4 @@ bot.add_cog(QuoteCog(bot))
 bot.add_cog(RandCog(bot))
 
 if __name__ == "__main__":
-    logging.error("Bot run")
-    print('hi')
     bot.run(os.environ.get('DISCORD_TOKEN', ''))

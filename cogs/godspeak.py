@@ -14,7 +14,6 @@ class GodspeakCog(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 4, commands.BucketType.user)
     async def godspeak(self, ctx: Context, *args):
-        logging.error('godspeak')
         if len(args) < 1:
             num = 32
         else:
