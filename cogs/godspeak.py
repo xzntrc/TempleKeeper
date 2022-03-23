@@ -4,7 +4,7 @@ import os
 import discord
 import requests
 from discord.ext import commands
-from discord.ext.commands import Command, Context
+from discord.ext.commands import Context
 
 
 class GodspeakCog(commands.Cog):

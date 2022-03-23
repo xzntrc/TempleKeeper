@@ -7,6 +7,7 @@ import os
 import sentry_sdk
 
 from cogs.godspeak import GodspeakCog
+from cogs.presence_changer import PresenceChangerCog
 from cogs.quote import QuoteCog
 from cogs.rand import RandCog
 
@@ -113,6 +114,7 @@ async def on_message(message):
 bot.add_cog(GodspeakCog(bot))
 bot.add_cog(QuoteCog(bot))
 bot.add_cog(RandCog(bot))
+bot.add_cog(PresenceChangerCog(bot))
 
 if __name__ == "__main__":
     bot.run(os.environ.get('DISCORD_TOKEN', ''))
