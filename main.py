@@ -7,8 +7,13 @@ import os
 import sentry_sdk
 import logging
 
+from cogs.godspeak import GodspeakCog
+from cogs.quote import QuoteCog
+from cogs.rand import RandCog
+
 sentry_sdk.init(
     os.environ.get('SENTRY_DSN', ''),
+    environment=os.environ.get('ENVIRONMENT', 'DEV'),
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
@@ -16,14 +21,14 @@ sentry_sdk.init(
 )
 
 
-def get_prefix(_, message):
-    with open('prefixes.json', 'r') as f:
-        prefixes = json.load(f)
-        logging.debug(f"prefix:{prefixes[str(message.guild.id)]}")
-        return prefixes[str(message.guild.id)]
+# def get_prefix(_, message):
+#     with open('prefixes.json', 'r') as f:
+#         prefixes = json.load(f)
+#         logging.error(f"prefix:{prefixes[str(message.guild.id)]}")
+#         return prefixes[str(message.guild.id)]
 
 
-bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True, help_command=None)
+bot = commands.Bot(command_prefix=os.environ.get('PREFIX', '>'), case_insensitive=True, help_command=None)
 
 
 @bot.command()
@@ -61,23 +66,23 @@ async def on_guild_remove(guild):
         json.dump(prefixes, f, indent=4)
 
 
-@bot.command(aliases=['changeprefix', 'prefixset', 'prefixchange'])
-@commands.has_permissions(administrator=True)
-async def setprefix(ctx, prefix):
-    with open('prefixes.json', 'r') as f:
-        prefixes = json.load(f)
-
-    prefixes[str(ctx.guild.id)] = prefix
-
-    with open('prefixes.json', 'w') as f:
-        json.dump(prefixes, f, indent=4)
-
-    await ctx.send(f'Successfully changed the prefix to: **``{prefix}``**')
+# @bot.command(aliases=['changeprefix', 'prefixset', 'prefixchange'])
+# @commands.has_permissions(administrator=True)
+# async def setprefix(ctx, prefix):
+#     with open('prefixes.json', 'r') as f:
+#         prefixes = json.load(f)
+#
+#     prefixes[str(ctx.guild.id)] = prefix
+#
+#     with open('prefixes.json', 'w') as f:
+#         json.dump(prefixes, f, indent=4)
+#
+#     await ctx.send(f'Successfully changed the prefix to: **``{prefix}``**')
 
 
 @bot.event
 async def on_ready():
-    logging.debug("Bot is ready")
+    logging.error("Bot is ready")
     await bot.change_presence(activity=discord.Game(name="chess with God"))
 
 
@@ -88,7 +93,7 @@ async def ping(ctx):
 
 @bot.command()
 async def showme(ctx):
-    logging.debug("showmetheway")
+    logging.error("showmetheway")
     await ctx.send('The way')
 
 
@@ -97,7 +102,7 @@ async def on_message(message):
     user_id = os.environ.get('USER_ID', '955583532527411264')
     mention = f'<@&{user_id}>'
     if mention in message.content:
-        logging.debug("Mention")
+        logging.error("Mention")
         with open('prefixes.json', 'r') as f:
             prefixes = json.load(f)
 
@@ -109,10 +114,11 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs.{filename[:-3]}')
+bot.add_cog(GodspeakCog(bot))
+bot.add_cog(QuoteCog(bot))
+bot.add_cog(RandCog(bot))
 
 if __name__ == "__main__":
-    logging.debug("Bot run")
+    logging.error("Bot run")
+    print('hi')
     bot.run(os.environ.get('DISCORD_TOKEN', ''))
