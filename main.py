@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 import json
+import logging
+import random
+
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 import sentry_sdk
 
@@ -19,7 +22,6 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
-
 
 # def get_prefix(_, message):
 #     with open('prefixes.json', 'r') as f:
@@ -82,7 +84,8 @@ async def on_guild_remove(guild):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="chess with God"))
+    pass
+    # await bot.change_presence(activity=discord.Game(name="chess with God"))
 
 
 @bot.command()

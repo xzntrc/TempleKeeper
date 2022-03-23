@@ -9,8 +9,14 @@ from discord.ext.commands import Bot
 class PresenceChangerCog(commands.Cog):
     def __init__(self, client: Bot):
         self.client = client
+        if not self.random_presence.is_running():
+            self.random_presence.start()
+        self.random_presence.add_exception_type(AttributeError)
 
-    @tasks.loop(minutes=5)
+    def cog_unload(self):
+        self.random_presence.cancel()
+
+    @tasks.loop(minutes=15)
     async def random_presence(self):
         activities = [
             discord.Activity(type=discord.ActivityType.listening, name='Burzum - Dunkelheit'),
@@ -57,5 +63,4 @@ class PresenceChangerCog(commands.Cog):
             discord.Activity(type=discord.ActivityType.playing, name='Counter Strike: Global Offensive'),
             discord.Activity(type=discord.ActivityType.playing, name='Counter Strike: Global Offensive'),
         ]
-        logging.error('TEST presence changer')
         await self.client.change_presence(activity=random.choice(activities))
