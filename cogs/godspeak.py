@@ -19,7 +19,7 @@ class GodspeakCog(commands.Cog):
         else:
             num = args[0]
         message = await ctx.send("Lord is processeth thy request...")
-        uri = "{}/get/?num={}".format(os.environ.get('GODSPEAK_APIs_URL'), num)
+        uri = "{}/get/?num={}".format(os.environ.get('GODSPEAK_API_URL'), num)
         sentence = None
         try:
             sentence = requests.get(uri).json()
