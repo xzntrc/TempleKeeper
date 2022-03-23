@@ -1,8 +1,10 @@
+import os
+
 import discord
+import requests
 from discord.ext import commands
-import math
-import urllib.request
-from discord.ext.commands import cooldown, BucketType
+
+
 class godspeakCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -15,30 +17,21 @@ class godspeakCog(commands.Cog):
         else:
             num = args[0]
 
-        output = urllib.request.urlopen(f"https://www.random.org/integers/?num={num}&min=0&max=7569&col=1&base=10&format=plain&rnd=new")
-        numbers = []
-        for word in output.read().split():
-            if word.isdigit():
-                numbers.append(int(word))
-
-        f = open("vocab.txt", "r")
-        d = f.read()
-        vocabList = d.split("\n")
-        f.close() 
-        godswords = [] 
-        for i in range(len(numbers)):
-            godswords.append(vocabList[numbers[i]])
-
-        speaketh = ' '.join(godswords)
-        e = discord.Embed(title="Lord Speaketh", description=f"{speaketh}", color=discord.Color.from_rgb(0,244,244))
+        uri = "{}/get/?num={}".format(os.environ.get('GODSPEAK_API_URL'), num)
+        sentence = requests.get(uri).json()
+        e = discord.Embed(title="Lord Speaketh", description=f"{sentence['godspeak']}",
+                          color=discord.Color.from_rgb(0, 244, 244))
         e.set_footer(text="For God speaketh once, yea twice, perceiveth it not. ")
         await ctx.send(embed=e)
 
     @godspeak.error
     async def command_name_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
-            em = discord.Embed(title=f"Slow it down",description=f"To prevent spam, a cooldown is in place, try again in {error.retry_after:.2f}s.", color=discord.Color.orange())
+            em = discord.Embed(title=f"Slow it down",
+                               description=f"To prevent spam, a cooldown is in place, try again in {error.retry_after:.2f}s.",
+                               color=discord.Color.orange())
             await ctx.send(embed=em, delete_after=5)
+
 
 def setup(bot):
     bot.add_cog(godspeakCog(bot))
