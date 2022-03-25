@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
 import json
-import logging
-import random
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import os
 import sentry_sdk
 
