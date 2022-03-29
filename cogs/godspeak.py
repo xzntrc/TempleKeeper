@@ -16,6 +16,7 @@ class GodspeakCog(commands.Cog):
     @commands.cooldown(1, 4, commands.BucketType.user)
     async def godspeak(self, ctx: Context, *args):
         if not self.generate_message.is_running():
+            print('not running. Starting now.')
             self.generate_message.start(ctx)
 
         if len(args) < 1:
@@ -46,7 +47,7 @@ class GodspeakCog(commands.Cog):
                                color=discord.Color.orange())
             await ctx.send(embed=em, delete_after=5)
 
-    async def cog_unload(self):
+    def cog_unload(self):
         self.generate_message.stop()
 
     @tasks.loop(hours=1)
@@ -54,7 +55,10 @@ class GodspeakCog(commands.Cog):
         target_time_h = int(os.environ.get('SCHEDULED_MESSAGE_TIME_H', 8))
         current_time = datetime.now().time()
         if current_time.hour == target_time_h:
+            print(f"God speak at: {current_time.hour}:{current_time.minute}")
             await self.godspeak(ctx)
+        else:
+            print(f"God speak attempt at: {current_time.hour}:{current_time.minute}")
 
 
 def setup(bot):
