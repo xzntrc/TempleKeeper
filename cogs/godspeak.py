@@ -1,44 +1,65 @@
+import logging
+import os
+from datetime import datetime
+
 import discord
-from discord.ext import commands
-import math
-import urllib.request
-from discord.ext.commands import cooldown, BucketType
-class godspeakCog(commands.Cog):
-    def __init__(self, bot):
+import requests
+from discord.ext import commands, tasks
+from discord.ext.commands import Context, Bot
+
+
+class GodspeakCog(commands.Cog):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @commands.command()
     @commands.cooldown(1, 4, commands.BucketType.user)
-    async def godspeak(self, ctx, *args):
+    async def godspeak(self, ctx: Context, *args):
+        if not self.generate_message.is_running():
+            print('not running. Starting now.')
+            self.generate_message.start(ctx)
+
         if len(args) < 1:
-            num = 32
+            num = 15
         else:
             num = args[0]
+        message = await ctx.send("Lord is processeth thy request...")
+        uri = "{}/get/?num={}".format(os.environ.get('GODSPEAK_API_URL'), num)
+        sentence = None
+        try:
+            sentence = requests.get(uri).json()
+        except Exception as e:
+            logging.error(e)
 
-        output = urllib.request.urlopen(f"https://www.random.org/integers/?num={num}&min=0&max=7569&col=1&base=10&format=plain&rnd=new")
-        numbers = []
-        for word in output.read().split():
-            if word.isdigit():
-                numbers.append(int(word))
-
-        f = open("vocab.txt", "r")
-        d = f.read()
-        vocabList = d.split("\n")
-        f.close() 
-        godswords = [] 
-        for i in range(len(numbers)):
-            godswords.append(vocabList[numbers[i]])
-
-        speaketh = ' '.join(godswords)
-        e = discord.Embed(title="Lord Speaketh", description=f"{speaketh}", color=discord.Color.from_rgb(0,244,244))
-        e.set_footer(text="For God speaketh once, yea twice, perceiveth it not. ")
-        await ctx.send(embed=e)
+        if not sentence or "godspeak" not in sentence:
+            await message.edit(content='Thy Lord is buseth at the moment please try in a foreseeable future.')
+        else:
+            e = discord.Embed(title="Lord Speaketh", description=f"{sentence['godspeak']}",
+                              color=discord.Color.from_rgb(0, 244, 244))
+            e.set_footer(text="For God speaketh once, yea twice, perceiveth it not. ")
+            await message.edit(content='', embed=e)
 
     @godspeak.error
     async def command_name_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
-            em = discord.Embed(title=f"Slow it down",description=f"To prevent spam, a cooldown is in place, try again in {error.retry_after:.2f}s.", color=discord.Color.orange())
+            em = discord.Embed(title=f"Slow it down",
+                               description=f"To prevent spam, a cooldown is in place, try again in {error.retry_after:.2f}s.",
+                               color=discord.Color.orange())
             await ctx.send(embed=em, delete_after=5)
 
+    def cog_unload(self):
+        self.generate_message.stop()
+
+    @tasks.loop(hours=1)
+    async def generate_message(self, ctx):
+        target_time_h = int(os.environ.get('SCHEDULED_MESSAGE_TIME_H', 8))
+        current_time = datetime.now().time()
+        if current_time.hour == target_time_h:
+            print(f"God speak at: {current_time.hour}:{current_time.minute}")
+            await self.godspeak(ctx)
+        else:
+            print(f"God speak attempt at: {current_time.hour}:{current_time.minute}")
+
+
 def setup(bot):
-    bot.add_cog(godspeakCog(bot))
+    bot.add_cog(GodspeakCog(bot))
